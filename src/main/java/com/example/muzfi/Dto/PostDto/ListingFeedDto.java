@@ -1,5 +1,6 @@
 package com.example.muzfi.Dto.PostDto;
 
+import com.example.muzfi.Enums.ProductCondition;
 import com.example.muzfi.Model.Post.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class ListingFeedDto {
 
     private BigDecimal price;
 
-    private String condition;
+    private ProductCondition condition;
 
     private int bidsCount;
 

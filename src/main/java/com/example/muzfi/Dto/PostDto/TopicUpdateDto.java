@@ -1,11 +1,13 @@
 package com.example.muzfi.Dto.PostDto;
 
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Enums.PostCategory;
 import com.example.muzfi.Enums.TopicType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.Binary;
 
 import java.util.List;
 
@@ -24,7 +26,9 @@ public class TopicUpdateDto {
 
     private String text;
 
-    private List<PostCategory> postCategory;
+    private Binary image;
 
-    private List<String> tags;
+    private GenreType postCategory;
+
+    private String tags;
 }

@@ -27,7 +27,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setPurchaseDate(LocalDateTime.now());
         double totalAmount = 0;
         for (Product product : purchase.getProducts()) {
-            totalAmount = totalAmount + product.getPrice();
+            totalAmount = totalAmount + product.getPrice().doubleValue();
         }
         purchase.setTotalAmount(totalAmount);
         Purchase createdPurchase = purchaseRepository.save(purchase);

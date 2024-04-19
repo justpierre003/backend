@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/topics")
 public class TopicController {
@@ -27,17 +27,17 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping
     public ResponseEntity<?> createTopic(@RequestBody TopicCreateDto topicDto) {
         try {
             String loggedInUserId = topicDto.getAuthorId();
 
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             Optional<?> topic = topicService.createTopic(topicDto);
 

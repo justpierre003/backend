@@ -1,5 +1,6 @@
 package com.example.muzfi.Controller;
 
+import com.example.muzfi.Enums.Formula;
 import com.example.muzfi.Enums.ProductCondition;
 import com.example.muzfi.Model.Product;
 import com.example.muzfi.Services.ProductService;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -45,9 +46,27 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/byFormula/{formula}")
+    public ResponseEntity<List<Product>> getProductsByFormula(@PathVariable Formula formula) {
+        List<Product> products = productService.getProductsByFormula(formula);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/bySize/{size}")
+    public ResponseEntity<List<Product>> getProductsBySize(@PathVariable Double size) {
+        List<Product> products = productService.getProductsBySize(size);
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/byBrand/{brandId}")
     public ResponseEntity<List<Product>> getProductsByBrand(@PathVariable String brandId) {
         List<Product> products = productService.getProductsByBrand(brandId);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Product>> getProductsByUser(@PathVariable String userId) {
+        List<Product> products = productService.getProductsByUser(userId);
         return ResponseEntity.ok(products);
     }
 

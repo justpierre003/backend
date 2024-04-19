@@ -10,5 +10,5 @@ public class CommunitySettingsUpdate {
     private String description;
     private String country;
     private String privacy;
-    private Binary communityImage;
+    private String communityImage;
 }

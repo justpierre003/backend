@@ -1,5 +1,6 @@
 package com.example.muzfi.Services;
 
+import com.example.muzfi.Enums.Formula;
 import com.example.muzfi.Enums.ProductCondition;
 import com.example.muzfi.Model.Product;
 
@@ -15,7 +16,13 @@ public interface ProductService {
 
     List<Product> getProductsByBrand(String brandId);
 
+    List<Product> getProductsByUser(String userId);
+
     List<Product> getProductsByCategory(String category);
+
+    List<Product> getProductsByFormula(Formula formula);
+
+    List<Product> getProductsBySize(Double size);
 
     List<Product> getProductsByPriceRange(Double minPrice, Double maxPrice);
 

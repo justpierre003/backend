@@ -54,7 +54,7 @@ public class OrderDetailService {
                             orderInput.getOrderAlternateContactNumber(),
                             orderInput.getOrderEmail(),
                             ORDER_PLACED,
-                            product.getPrice() * o.getQuantity(),
+                            product.getPrice().doubleValue() * o.getQuantity(),
                             product,
                             user,
                             shippingDetails.getShippingId() // Link the shipping ID

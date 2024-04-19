@@ -1,6 +1,8 @@
 package com.example.muzfi.Dto.PostDto;
 
 import com.example.muzfi.Enums.DeliverMethod;
+import com.example.muzfi.Enums.Formula;
+import com.example.muzfi.Enums.ProductCondition;
 import com.example.muzfi.Model.Post.ProductShippingDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,13 +26,15 @@ public class ListingDetailsDto {
     private String authorId;
     private String authorEmail;
 
+    private PostAuthorDto author;
+
     private String brand;
 
     private String model;
 
-    private String year;
+    private Integer year;
 
-    private String finish;
+    private Double size;
 
     private String title;
 
@@ -38,19 +42,25 @@ public class ListingDetailsDto {
 
     private String description;
 
-    private Boolean isHandMade;
+    private Boolean isLiked;
+
+    private Integer comments;
+
+    private Integer likes;
 
     private List<String> images;
 
-    private String condition;
+    private ProductCondition condition;
 
     private String conditionDescription;
 
-    private String youTubeLink;
+    private String type;
 
-    private List<DeliverMethod> deliverMethod;
+    private Formula formula;
 
-    private ProductShippingDetails shippingDetails;
+//    private List<DeliverMethod> deliverMethod;
+//
+//    private ProductShippingDetails shippingDetails;
 
     private BigDecimal price;
 
@@ -58,13 +68,11 @@ public class ListingDetailsDto {
 
     private Boolean isAcceptOffers;
 
-    private BigDecimal bumpRate;
+//    private BigDecimal bumpRate;
 
     private int bidsCount;
 
     private LocalDateTime deadline;
-
-    private List<String> tags;
 
     private LocalDateTime createdDateTime;
 

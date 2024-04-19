@@ -5,15 +5,20 @@ import com.example.muzfi.Dto.PostDto.PostDetailsDto;
 import com.example.muzfi.Dto.PostDto.TopicCreateDto;
 import com.example.muzfi.Dto.PostDto.TopicUpdateDto;
 import com.example.muzfi.Enums.PostType;
+import com.example.muzfi.Enums.TopicType;
 import com.example.muzfi.Manager.PostManager;
 import com.example.muzfi.Model.Post.Post;
 import com.example.muzfi.Model.Post.Topic;
+import com.example.muzfi.Model.User;
 import com.example.muzfi.Repository.PostRepository;
 import com.example.muzfi.Repository.TopicRepository;
 import com.example.muzfi.Services.User.UserService;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +33,34 @@ public class TopicServiceImpl implements TopicService {
 
     private final UserService userService;
 
+    private final PostService postService;
+
     private final PostManager postManager;
 
     @Autowired
-    public TopicServiceImpl(TopicRepository topicRepository, PostRepository postRepository, UserService userService, PostManager postManager) {
+    public TopicServiceImpl(TopicRepository topicRepository, PostService postService, PostRepository postRepository, UserService userService, PostManager postManager) {
         this.topicRepository = topicRepository;
         this.postRepository = postRepository;
         this.userService = userService;
         this.postManager = postManager;
+        this.postService = postService;
     }
 
     @Override
-    public Optional<PostDetailsDto> createTopic(TopicCreateDto topicDto) {
+    public Optional<PostDetailsDto> createTopic(TopicCreateDto topicDto) throws IOException {
+        Optional<User> user = userService.getUserById(topicDto.getAuthorId());
         //create post
         Post newPost = new Post();
         newPost.setAuthorId(topicDto.getAuthorId());
-        newPost.setPostType(PostType.PROD_TOPIC);
+        if(topicDto.getTopicType() == TopicType.CONTENT){
+            newPost.setPostType(PostType.PROD_TOPIC_IMG);
+        }else{ newPost.setPostType(PostType.PROD_TOPIC);}
         newPost.setIsEnablePostReplyNotification(topicDto.getIsEnablePostReplyNotification());
         newPost.setCreatedDateTime(topicDto.getCreatedDateTime());
         newPost.setUpdatedDateTime(topicDto.getCreatedDateTime());
         newPost.setIsDraft(topicDto.getIsDraft());
+        newPost.setCommunity(topicDto.getCommunity());
+        newPost.setPostCategory(topicDto.getPostCategory());
 
         //create topic
         Topic newTopic = new Topic();
@@ -56,9 +69,18 @@ public class TopicServiceImpl implements TopicService {
         newTopic.setTopicType(topicDto.getTopicType());
         newTopic.setText(topicDto.getDescription());
         newTopic.setPostCategory(topicDto.getPostCategory());
-        newTopic.setTags(topicDto.getTags());
+
+        if(topicDto.getTopicType() == TopicType.CONTENT){
+            newTopic.setImage(topicDto.getImage());
+
+        }
         newTopic.setCreatedDateTime(topicDto.getCreatedDateTime());
         newTopic.setUpdatedDateTime(topicDto.getCreatedDateTime());
+
+        User existingUser = user.get();
+        existingUser.setMuzPoints(existingUser.getMuzPoints() + 15);
+        existingUser.setNoOfPosts(existingUser.getNoOfPosts() + 1);
+        userService.updateUser(existingUser);
 
 
         //save post and topic
@@ -85,7 +107,13 @@ public class TopicServiceImpl implements TopicService {
 
         if (topicOptional.isPresent()) {
             Topic topic = topicOptional.get();
-
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(topic.getAuthorId());
+            PostAuthorDto author = authorOptional.get();
+            Optional<PostDetailsDto> postOptional = postService.getPostById(topic.getPostId());
+            topic.setIsLiked(postOptional.get().getIsLiked());
+            topic.setLikes(postOptional.get().getLikes());
+            topic.setComments(postOptional.get().getComments());
+            topic.setAuthor(author);
             return Optional.of(topic);
         } else {
             return Optional.empty();

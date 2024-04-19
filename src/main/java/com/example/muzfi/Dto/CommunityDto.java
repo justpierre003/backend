@@ -1,6 +1,8 @@
 package com.example.muzfi.Dto;
 
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Model.CommunityRule;
+import com.example.muzfi.Model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,15 +26,15 @@ public class CommunityDto {
     private int postCount;
     private String sub;
     private String type;
-    private String genre;
+    private GenreType genre;
     private boolean joinable;
     private boolean creatable;
     private List<String> reviews;
     private List<String> similarCommunityIds;
     private CommunityRule rules;
     private int rankedSize;
-    private List<String> moderators;
+    private List<User> moderators;
     private String country;
-    private Binary communityImage;
+    private String communityImage;
     private String description;
 }

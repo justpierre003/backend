@@ -18,6 +18,8 @@ public class CommentReplyDetailsDto {
 
     private String text;
 
+    private PostAuthorDto author;
+
     private LocalDateTime createdDateTime;
 
     private LocalDateTime updatedDateTime;

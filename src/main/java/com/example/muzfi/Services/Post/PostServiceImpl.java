@@ -1,17 +1,18 @@
 package com.example.muzfi.Services.Post;
 
-import com.example.muzfi.Dto.PostDto.ListingFeedDto;
-import com.example.muzfi.Dto.PostDto.PostAuthorDto;
-import com.example.muzfi.Dto.PostDto.PostCreateDto;
-import com.example.muzfi.Dto.PostDto.PostDetailsDto;
+import com.example.muzfi.Dto.PostDto.*;
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Enums.PostType;
 import com.example.muzfi.Manager.ListingManager;
 import com.example.muzfi.Manager.PostManager;
+import com.example.muzfi.Model.Community;
+import com.example.muzfi.Model.Gear;
 import com.example.muzfi.Model.Post.Listing;
 import com.example.muzfi.Model.Post.Poll;
 import com.example.muzfi.Model.Post.Post;
 import com.example.muzfi.Model.Post.Topic;
 import com.example.muzfi.Repository.*;
+import com.example.muzfi.Services.CommunityService;
 import com.example.muzfi.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +33,8 @@ public class PostServiceImpl implements PostService {
 
     private final TopicRepository topicRepository;
 
+    private final GearRepository gearRepository;
+
     private final PollRepository pollRepository;
 
     private final PollOptionRepository pollOptionRepository;
@@ -39,6 +42,8 @@ public class PostServiceImpl implements PostService {
     private final UserService userService;
 
     private final LikeService likeService;
+
+    private final CommunityService communityService;
 
     private final CommentService commentService;
 
@@ -51,9 +56,10 @@ public class PostServiceImpl implements PostService {
 
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, ListingRepository listingRepository, TopicRepository topicRepository, PollRepository pollRepository, PollOptionRepository pollOptionRepository, UserService userService, LikeService likeService, CommentService commentService, OfferService offerService, PostManager postManager, ListingManager listingManager) {
+    public PostServiceImpl(CommunityService communityService, PostRepository postRepository,GearRepository gearRepository, ListingRepository listingRepository, TopicRepository topicRepository, PollRepository pollRepository, PollOptionRepository pollOptionRepository, UserService userService, LikeService likeService, CommentService commentService, OfferService offerService, PostManager postManager, ListingManager listingManager) {
         this.postRepository = postRepository;
         this.listingRepository = listingRepository;
+        this.gearRepository = gearRepository;
         this.topicRepository = topicRepository;
         this.pollRepository = pollRepository;
         this.pollOptionRepository = pollOptionRepository;
@@ -62,10 +68,11 @@ public class PostServiceImpl implements PostService {
         this.commentService = commentService;
         this.offerService = offerService;
         this.postManager = postManager;
+        this.communityService = communityService;
         this.listingManager = listingManager;
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @Override
     public Optional<PostDetailsDto> createPost(PostCreateDto postDto) {
         try {
@@ -78,6 +85,7 @@ public class PostServiceImpl implements PostService {
             Post newPost = new Post();
             newPost.setAuthorId(postDto.getAuthorId());
             newPost.setIsDraft(postDto.getIsDraft());
+
 
             // Save the post
             Post createdPost = postRepository.save(newPost);
@@ -121,7 +129,68 @@ public class PostServiceImpl implements PostService {
                 postList.add(postDetailsDto);
             }
         }
+        Collections.reverse(postList);
+        if (postList.isEmpty()) {
+            return Optional.empty();
+        }
 
+        return Optional.of(postList);
+    }
+
+    //Retrieve all posts - not draft
+    @Override
+    public Optional<List<PostDetailsDto>> getAllPostsByGenre(GenreType genreType) {
+        List<Post> posts = postRepository.findAllByPostCategory(genreType);
+
+        List<PostDetailsDto> postList = new ArrayList<>();
+
+        for (Post post : posts) {
+            //Filter out draft posts
+            if (post.getIsDraft() != null && post.getIsDraft().equals(true)) {
+                continue;
+            }
+
+            Object postTypeData = getPostTypeData(post);
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(post.getAuthorId());
+
+            if (postTypeData != null && authorOptional.isPresent()) {
+                PostAuthorDto author = authorOptional.get();
+                PostDetailsDto postDetailsDto = postManager.getPostDetailsDto(post, postTypeData, author);
+                postList.add(postDetailsDto);
+            }
+        }
+        Collections.reverse(postList);
+        if (postList.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(postList);
+    }
+
+    //Retrieve all posts - not draft
+    @Override
+    public Optional<List<PostDetailsDto>> getAllPostsByCommunity(String community) {
+        List<Post> posts = postRepository.findAllByCommunity(community);
+        Community community1 = communityService.getCommunityByName(community);
+
+        List<PostDetailsDto> postList = new ArrayList<>();
+
+        for (Post post : posts) {
+            //Filter out draft posts
+            if (post.getIsDraft() != null && post.getIsDraft().equals(true)) {
+                continue;
+            }
+
+            Object postTypeData = getPostTypeData(post);
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(post.getAuthorId());
+
+            if (postTypeData != null && authorOptional.isPresent()) {
+                PostAuthorDto author = authorOptional.get();
+                PostDetailsDto postDetailsDto = postManager.getPostDetailsDto(post, postTypeData, author);
+                postList.add(postDetailsDto);
+            }
+        }
+        Collections.reverse(postList);
         if (postList.isEmpty()) {
             return Optional.empty();
         }
@@ -178,7 +247,7 @@ public class PostServiceImpl implements PostService {
                     postDetailsDtoList.add(postDetailsDto);
                 }
             }
-
+            Collections.reverse(postDetailsDtoList);
             return Optional.of(postDetailsDtoList);
         } else {
             return Optional.empty();
@@ -346,7 +415,15 @@ public class PostServiceImpl implements PostService {
             }
         } else if (post.getPostType().equals(PostType.PROD_GEAR)) {
 
-            //TODO: Implementation for the gear
+            Optional<Gear> gearOptional = gearRepository.findById(post.getPostTypeId());
+
+            if (gearOptional.isPresent()) {
+                Gear gear = gearOptional.get();
+
+                postTypeData = gear;
+            } else {
+                return null;
+            }
 
         } else if (post.getPostType().equals(PostType.PROD_POLL)) {
 
@@ -354,8 +431,8 @@ public class PostServiceImpl implements PostService {
 
             if (pollOptional.isPresent()) {
                 Poll poll = pollOptional.get();
-
-                postTypeData = poll;
+                PollDetailsDto pollDetailsDto = postManager.getPollDetailsDto(poll);
+                postTypeData = pollDetailsDto;
             } else {
                 return null;
             }

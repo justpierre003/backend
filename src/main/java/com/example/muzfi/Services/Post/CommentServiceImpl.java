@@ -4,6 +4,7 @@ import com.example.muzfi.Dto.PostDto.*;
 import com.example.muzfi.Model.Post.Comment;
 import com.example.muzfi.Repository.CommentRepository;
 import com.example.muzfi.Services.EmailConfirmationService.EmailNotification.EmailNotificationService;
+import com.example.muzfi.Services.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,14 @@ public class CommentServiceImpl implements CommentService {
 
     private final EmailNotificationService emailNotificationService;
 
+    private final UserService userService;
+
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, EmailNotificationService emailNotificationService) {
+    public CommentServiceImpl(CommentRepository commentRepository, UserService userService, EmailNotificationService emailNotificationService) {
 
         this.commentRepository = commentRepository;
         this.emailNotificationService = emailNotificationService;
+        this.userService = userService;
     }
 
 
@@ -51,9 +55,12 @@ public class CommentServiceImpl implements CommentService {
                     Optional<Comment> commentOpt = commentRepository.findById(id);
 
                     if (commentOpt.isPresent()) {
-                        Comment commentReply = commentOpt.get();
-                        CommentReplyDetailsDto commentReplyDto = new CommentReplyDetailsDto();
 
+                        Comment commentReply = commentOpt.get();
+                        Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(commentReply.getUserId());
+                        PostAuthorDto author = authorOptional.get();
+                        CommentReplyDetailsDto commentReplyDto = new CommentReplyDetailsDto();
+                        commentReplyDto.setAuthor(author);
                         commentReplyDto.setId(commentReply.getId());
                         commentReplyDto.setUserId(commentReply.getUserId());
                         commentReplyDto.setText(commentReply.getText());
@@ -68,8 +75,10 @@ public class CommentServiceImpl implements CommentService {
 
             //Create parent comment
             CommentDetailsDto commentDetails = new CommentDetailsDto();
-
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(comment.getUserId());
+            PostAuthorDto author = authorOptional.get();
             commentDetails.setId(comment.getId());
+            commentDetails.setAuthor(author);
             commentDetails.setPostId(comment.getPostId());
             commentDetails.setUserId(comment.getUserId());
             commentDetails.setText(comment.getText());
@@ -98,6 +107,7 @@ public class CommentServiceImpl implements CommentService {
             Optional<CommentDetailsDto> commentDtoOpt = getCommentDetailsById(comment.getId());
 
             commentDtoOpt.ifPresent(postComments::add);
+
         }
 
         return Optional.of(postComments);
@@ -151,7 +161,7 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.save(comment);
 
             // Send email notification for the reply
-            emailNotificationService.sendEmailForCommentReply(replyDto.getRepliedToUserId(), replyDto.getUserId(), replyDto.getText());
+//            emailNotificationService.sendEmailForCommentReply(replyDto.getRepliedToUserId(), replyDto.getUserId(), replyDto.getText());
 
 
             return getCommentDetailsById(comment.getId());

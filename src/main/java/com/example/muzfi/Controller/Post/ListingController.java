@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/listings")
 public class ListingController {
@@ -101,27 +102,27 @@ public class ListingController {
     }
 
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping("/create")
     public ResponseEntity<?> createListing(@RequestBody ListingCreateDto listingDto) {
         try {
-            String loggedInUserId = listingDto.getAuthorId();
+//            String loggedInUserId = listingDto.getAuthorId();
 
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
-
-            boolean isElite = authService.isElite();
-
-            if (!isElite) {
-                Optional<List<ListingDetailsDto>> currentMonthListingsOpt = listingService.getListingsCreatedByUserInCurrentMonth(loggedInUserId);
-
-                if (currentMonthListingsOpt.isPresent() && currentMonthListingsOpt.get().size() > 5) {
-                    return new ResponseEntity<>("Unauthorized: You cannot post more than 5 listings(Including drafts) in a month for your current membership plan. Please upgrade your membership plan to post more.", HttpStatus.UNAUTHORIZED);
-                }
-            }
+//            boolean isElite = authService.isElite();
+//
+//            if (!isElite) {
+//                Optional<List<ListingDetailsDto>> currentMonthListingsOpt = listingService.getListingsCreatedByUserInCurrentMonth(loggedInUserId);
+//
+//                if (currentMonthListingsOpt.isPresent() && currentMonthListingsOpt.get().size() > 5) {
+//                    return new ResponseEntity<>("Unauthorized: You cannot post more than 5 listings(Including drafts) in a month for your current membership plan. Please upgrade your membership plan to post more.", HttpStatus.UNAUTHORIZED);
+//                }
+//            }
 
             Optional<?> listing = listingService.createListing(listingDto);
 

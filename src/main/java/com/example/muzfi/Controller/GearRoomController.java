@@ -1,5 +1,6 @@
 package com.example.muzfi.Controller;
 
+import com.example.muzfi.Model.Gear;
 import com.example.muzfi.Model.GearRoom;
 import com.example.muzfi.Services.GearRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/gearRooms")
 public class GearRoomController {
@@ -31,9 +32,9 @@ public class GearRoomController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getGearRoomsByUserId(@PathVariable("userId") Integer userId) {
+    public ResponseEntity<?> getGearRoomsByUserId(@PathVariable("userId") String userId) {
         try {
-            List<GearRoom> gearRooms = gearRoomService.getGearRoomsByUserId(userId);
+            Optional<GearRoom> gearRooms = gearRoomService.getGearRoomsByUserId(userId);
             return new ResponseEntity<>(gearRooms, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("An unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,6 +50,7 @@ public class GearRoomController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @PutMapping("/{gearRoomId}")
     public ResponseEntity<?> updateGearRoom(@PathVariable("gearRoomId") String gearRoomId, @RequestBody GearRoom gearRoom) {

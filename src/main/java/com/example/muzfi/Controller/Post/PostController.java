@@ -3,6 +3,7 @@ package com.example.muzfi.Controller.Post;
 import com.example.muzfi.Dto.PostDto.LikedUserDto;
 import com.example.muzfi.Dto.PostDto.PostCreateDto;
 import com.example.muzfi.Dto.PostDto.PostDetailsDto;
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Model.Post.Like;
 import com.example.muzfi.Services.AuthService;
 import com.example.muzfi.Services.Post.LikeService;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -34,17 +35,17 @@ public class PostController {
         this.likeService = likeService;
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping("/create-post")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateDto postDto) {
         try {
             String loggedInUserId = postDto.getAuthorId();
 
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             // Check if the user has reviewed the post before submitting
             if (!postDto.isReviewed()) {
@@ -75,6 +76,39 @@ public class PostController {
         } catch (Exception ex) {
             return new ResponseEntity<>("an unknown error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+    }
+
+    @GetMapping("/genre/{genre}")
+    public ResponseEntity<?> getAllPostsByGenre(@PathVariable GenreType genre) {
+        try {
+            Optional<List<PostDetailsDto>> postList = postService.getAllPostsByGenre(genre);
+
+            if (postList.isPresent()) {
+                return new ResponseEntity<>(postList.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Cannot retrieve posts", HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>("an unknown error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping("/community/{name}")
+    public ResponseEntity<?> getAllPostsByCommunity(@PathVariable String name) {
+        try {
+            Optional<List<PostDetailsDto>> postList = postService.getAllPostsByCommunity(name);
+
+            if (postList.isPresent()) {
+                return new ResponseEntity<>(postList.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Cannot retrieve posts", HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>("an unknown error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping("/{postId}")
@@ -153,15 +187,15 @@ public class PostController {
     }
 
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @GetMapping("/{postId}/like/{userId}")
     public ResponseEntity<?> addLike(@PathVariable("postId") String postId, @PathVariable("userId") String userId) {
         try {
-            boolean isLoggedInUser = authService.isLoggedInUser(userId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            boolean isLoggedInUser = authService.isLoggedInUser(userId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             Optional<Like> like = likeService.createLike(postId, userId);
 

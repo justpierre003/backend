@@ -1,5 +1,8 @@
 package com.example.muzfi.Model;
 
+import com.example.muzfi.Dto.PostDto.PostAuthorDto;
+import com.example.muzfi.Enums.GenreType;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,25 +22,49 @@ import java.util.List;
 public class Gear {
     @Id
     private String id;
-    private String ownerId;
+
+    private String postId;
+
+    private String authorId;
+
+    private PostAuthorDto author;
+
     private String name;
-    private Double price;
-    private Boolean customGear;
+
+    private Boolean addToFeed;
+
     private String brandName;
+
     private String model;
+
     private List<String>  photo;
+
     private String description;
+
     private String receiveMethod;
-    private String details;
-    private List<Review> reviews;
-    private List<Rating> ratings;
-    private List<String> pros;
-    private List<String> cons;
-    private Specs specs;
-    private List<PriceTrend> priceTrends;
-    private String category;
+
+    private String duration;
+
+    private String status;
+
+    private Boolean isLiked;
+
+    private Integer comments;
+
+    private Integer likes;
+
+    private Double sRate;
+
+    private Double pRate;
+
+    private Double vRate;
+
+    private Double lRate;
+
+    @NotNull
+    private GenreType postCategory;
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateTime;
 
 }
 

@@ -1,6 +1,8 @@
 package com.example.muzfi.Model.Post;
 
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Enums.PostType;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -24,6 +26,8 @@ public class Post {
 
     private String postTypeId;
 
+    private String community;
+
     private Integer shares;
 
     private Boolean isEnablePostReplyNotification;
@@ -33,6 +37,9 @@ public class Post {
     private LocalDateTime createdDateTime;
 
     private LocalDateTime updatedDateTime;
+
+    @NotNull
+    private GenreType postCategory;
 
     @CreatedDate
     private LocalDateTime createdDate;

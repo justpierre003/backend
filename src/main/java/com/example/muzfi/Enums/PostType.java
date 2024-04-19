@@ -4,6 +4,7 @@ public enum PostType {
     PROD_SALE("Listing"),
     PROD_GEAR("Gear"),
     PROD_TOPIC("Topic"),
+    PROD_TOPIC_IMG("Topic_Img"),
     PROD_POLL("Poll");
 
     private final String displayName;

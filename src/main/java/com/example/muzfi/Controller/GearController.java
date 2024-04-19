@@ -1,6 +1,8 @@
 package com.example.muzfi.Controller;
 
+import com.example.muzfi.Dto.PostDto.GearCreateDto;
 import com.example.muzfi.Model.Gear;
+import com.example.muzfi.Services.GearRoomService;
 import com.example.muzfi.Services.GearService;
 import com.example.muzfi.response.GearCreationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +12,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/gears")
 public class GearController {
 
     private final GearService gearService;
 
+    private final GearRoomService gearRoomService;
+
     @Autowired
-    public GearController(GearService gearService) {
+    public GearController(GearService gearService, GearRoomService gearRoomService) {
         this.gearService = gearService;
+        this.gearRoomService = gearRoomService;
     }
 
     @GetMapping
@@ -61,7 +66,7 @@ public class GearController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<?> createGear(@RequestBody Gear gear) {
+    public ResponseEntity<?> createGear(@RequestBody GearCreateDto gear) {
         try {
             Gear createdGear = gearService.createGear(gear);
             String successMessage = "Congrats, On adding your gear";

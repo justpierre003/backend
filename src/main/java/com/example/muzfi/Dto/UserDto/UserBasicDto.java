@@ -18,6 +18,8 @@ public class UserBasicDto {
 
     private String lastName;
 
+    private String background;
+
     private String displayName;
 
     private String profileUrl;

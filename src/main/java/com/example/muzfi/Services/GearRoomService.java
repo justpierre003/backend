@@ -1,5 +1,6 @@
 package com.example.muzfi.Services;
 
+import com.example.muzfi.Model.Gear;
 import com.example.muzfi.Model.GearRoom;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface GearRoomService {
 
     Optional<GearRoom> getGearRoomById(String gearRoomId);
 
-    List<GearRoom> getGearRoomsByUserId(Integer userId);
+    Optional<GearRoom> getGearRoomsByUserId(String userId);
 
     GearRoom createGearRoom(GearRoom gearRoom);
 
@@ -20,4 +21,7 @@ public interface GearRoomService {
 
     List<GearRoom> getLatestGearRooms(); // This fetches the latest 10 gear rooms
 
+    void addGear(Gear gearName);
+
+    void removeGear(String gearName, String userId);
 }

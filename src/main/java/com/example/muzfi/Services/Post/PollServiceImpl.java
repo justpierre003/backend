@@ -6,9 +6,11 @@ import com.example.muzfi.Manager.PostManager;
 import com.example.muzfi.Model.Post.Poll;
 import com.example.muzfi.Model.Post.PollOption;
 import com.example.muzfi.Model.Post.Post;
+import com.example.muzfi.Model.User;
 import com.example.muzfi.Repository.PollOptionRepository;
 import com.example.muzfi.Repository.PollRepository;
 import com.example.muzfi.Repository.PostRepository;
+import com.example.muzfi.Repository.UserRepository;
 import com.example.muzfi.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,16 +25,22 @@ public class PollServiceImpl implements PollService {
 
     private final PostRepository postRepository;
 
+    private final UserRepository userRepository;
+
     private final PollOptionRepository pollOptionRepository;
 
     private final UserService userService;
 
+    private final PostService postService;
+
     private final PostManager postManager;
 
     @Autowired
-    public PollServiceImpl(PollRepository pollRepository, PostRepository postRepository, PollOptionRepository pollOptionRepository, UserService userService, PostManager postManager) {
+    public PollServiceImpl(PostService postService,PollRepository pollRepository,UserRepository userRepository, PostRepository postRepository, PollOptionRepository pollOptionRepository, UserService userService, PostManager postManager) {
         this.pollRepository = pollRepository;
+        this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.postService = postService;
         this.pollOptionRepository = pollOptionRepository;
         this.userService = userService;
         this.postManager = postManager;
@@ -48,6 +56,8 @@ public class PollServiceImpl implements PollService {
         newPost.setCreatedDateTime(pollDto.getCreatedDateTime());
         newPost.setUpdatedDateTime(pollDto.getCreatedDateTime());
         newPost.setIsDraft(pollDto.getIsDraft());
+        newPost.setCommunity(pollDto.getCommunity());
+        newPost.setPostCategory(pollDto.getPostCategory());
 
         //creat poll options
         List<String> pollOptionIds = new ArrayList<>();
@@ -66,11 +76,17 @@ public class PollServiceImpl implements PollService {
         newPoll.setText(pollDto.getDescription());
         newPoll.setPollOptionIds(pollOptionIds);
         newPoll.setPollDeadline(pollDto.getDeadline());
+        newPoll.setPostCategory(pollDto.getPostCategory());
         newPoll.setPostCategories(pollDto.getPostCategories());
-        newPoll.setTags(pollDto.getTags());
         newPoll.setCreatedDateTime(pollDto.getCreatedDateTime());
         newPoll.setUpdatedDateTime(pollDto.getCreatedDateTime());
-
+        Optional<User> userOptional = userRepository.findById(pollDto.getAuthorId());
+        if (userOptional.isPresent()) {
+            User existingUser = userOptional.get();
+            existingUser.setMuzPoints(existingUser.getMuzPoints() + 15);
+            existingUser.setNoOfPosts(existingUser.getNoOfPosts() + 1);
+            userRepository.save(existingUser);
+        }
 
         //save post and topic
         Post post = postRepository.save(newPost);
@@ -98,7 +114,13 @@ public class PollServiceImpl implements PollService {
         if (pollOptional.isPresent()) {
             Poll poll = pollOptional.get();
             PollDetailsDto pollDetailsDto = postManager.getPollDetailsDto(poll);
-
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(poll.getAuthorId());
+            PostAuthorDto author = authorOptional.get();
+            Optional<PostDetailsDto> postOptional = postService.getPostById(poll.getPostId());
+            pollDetailsDto.setIsLiked(postOptional.get().getIsLiked());
+            pollDetailsDto.setLikes(postOptional.get().getLikes());
+            pollDetailsDto.setComments(postOptional.get().getComments());
+            pollDetailsDto.setAuthor(author);
             return Optional.of(pollDetailsDto);
         } else {
             return Optional.empty();

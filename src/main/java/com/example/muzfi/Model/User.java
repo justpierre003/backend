@@ -1,5 +1,6 @@
 package com.example.muzfi.Model;
 
+import com.example.muzfi.Enums.BackgroundType;
 import com.example.muzfi.Enums.UserGender;
 import com.example.muzfi.Enums.UserRole;
 import lombok.AllArgsConstructor;
@@ -47,11 +48,9 @@ public class User {
 
     private String location;
 
-    private String country;
+    private BackgroundType background = BackgroundType.CASUAL;
 
-    private String state;
-
-    private String city;
+    private Boolean isShowsUpInSearchResults = true;
 
     private String profilePicUri;
 
@@ -64,6 +63,16 @@ public class User {
     private Set<String> followingsUserIds;
 
     private int muzPoints;
+
+    private int noOfPosts;
+
+    private int noOfGears;
+
+    private int noOfSales;
+
+    private double sellerRatings = 5.0;
+
+    private double buyerRatings = 5.0;
 
     private Set<String> blockedUserIds;
 

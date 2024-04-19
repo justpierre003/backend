@@ -365,7 +365,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Optional<List<SearchResultDto>> searchGearsByCategories(String query) {
-        List<Gear> gearList = gearRepository.findByCategoryContainingIgnoreCase(query);
+        List<Gear> gearList = gearRepository.findByPostCategoryContainingIgnoreCase(query);
 
         List<SearchResultDto> searchResults = new ArrayList<>();
 

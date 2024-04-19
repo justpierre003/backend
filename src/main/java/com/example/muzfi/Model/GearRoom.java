@@ -20,7 +20,7 @@ public class GearRoom {
     @Id
     private String id;
 
-    private Integer userId; // Reference to the user who owns this room
+    private String userId; // Reference to the user who owns this room
 
     @CreatedDate
     private LocalDateTime createdDate;

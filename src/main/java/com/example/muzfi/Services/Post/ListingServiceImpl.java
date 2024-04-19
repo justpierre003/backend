@@ -6,9 +6,12 @@ import com.example.muzfi.Manager.ListingManager;
 import com.example.muzfi.Manager.PostManager;
 import com.example.muzfi.Model.Post.Listing;
 import com.example.muzfi.Model.Post.Post;
+import com.example.muzfi.Model.Product;
+import com.example.muzfi.Model.User;
 import com.example.muzfi.Repository.ListingRepository;
 import com.example.muzfi.Repository.PostRepository;
 import com.example.muzfi.Services.ListingEventPublisher;
+import com.example.muzfi.Services.ProductService;
 import com.example.muzfi.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,10 @@ public class ListingServiceImpl implements ListingService {
 
     private final UserService userService;
 
+    private final ProductService productService;
+
+    private final PostService postService;
+
     private final PostManager postManager;
 
     private final ListingManager listingManager;
@@ -34,12 +41,14 @@ public class ListingServiceImpl implements ListingService {
     private final ListingEventPublisher listingEventPublisher;
 
     @Autowired
-    public ListingServiceImpl(PostRepository postRepository, ListingRepository listingRepository, UserService userService, PostManager postManager, ListingManager listingManager, ListingEventPublisher listingEventPublisher) {
+    public ListingServiceImpl(ProductService productService, PostService postService, PostRepository postRepository, ListingRepository listingRepository, UserService userService, PostManager postManager, ListingManager listingManager, ListingEventPublisher listingEventPublisher) {
         this.postRepository = postRepository;
+        this.productService = productService;
         this.listingRepository = listingRepository;
         this.userService = userService;
         this.postManager = postManager;
         this.listingManager = listingManager;
+        this.postService = postService;
         this.listingEventPublisher = listingEventPublisher;
     }
 
@@ -76,7 +85,13 @@ public class ListingServiceImpl implements ListingService {
         if (listingOptional.isPresent()) {
             Listing listing = listingOptional.get();
             ListingDetailsDto dto = listingManager.getListingDetailsDto(listing);
-
+            Optional<PostAuthorDto> authorOptional = userService.getPostAuthor(dto.getAuthorId());
+            PostAuthorDto author = authorOptional.get();
+            Optional<PostDetailsDto> postOptional = postService.getPostById(dto.getPostId());
+            dto.setIsLiked(postOptional.get().getIsLiked());
+            dto.setLikes(postOptional.get().getLikes());
+            dto.setComments(postOptional.get().getComments());
+            dto.setAuthor(author);
             return Optional.of(dto);
         } else {
             return Optional.empty();
@@ -139,6 +154,7 @@ public class ListingServiceImpl implements ListingService {
 
     @Override
     public Optional<PostDetailsDto> createListing(ListingCreateDto listingDto) {
+        Optional<User> user = userService.getUserById(listingDto.getAuthorId());
         //create post
         Post newPost = new Post();
         newPost.setAuthorId(listingDto.getAuthorId());
@@ -146,6 +162,7 @@ public class ListingServiceImpl implements ListingService {
         newPost.setIsEnablePostReplyNotification(listingDto.getIsEnablePostReplyNotification());
         newPost.setCreatedDateTime(LocalDateTime.now());
         newPost.setUpdatedDateTime(LocalDateTime.now());
+        newPost.setCommunity(listingDto.getCommunity());
         newPost.setIsDraft(listingDto.getIsDraft());
 
         //create listing
@@ -154,33 +171,54 @@ public class ListingServiceImpl implements ListingService {
         newListing.setBrand(listingDto.getBrand());
         newListing.setModel(listingDto.getModel());
         newListing.setYear(listingDto.getYear());
-        newListing.setShippingDetails(listingDto.getShippingDetails());
-        newListing.setFinish(listingDto.getFinish());
+        newListing.setSize(listingDto.getSize());
         newListing.setTitle(listingDto.getTitle());
         newListing.setSubTitle(listingDto.getSubTitle());
         newListing.setDescription(listingDto.getDescription());
-        newListing.setIsHandMade(listingDto.getIsHandMade());
+        newListing.setFormula(listingDto.getFormula());
         newListing.setImages(listingDto.getImages());
         newListing.setCreatedDateTime(LocalDateTime.now());
         newListing.setUpdatedDateTime(LocalDateTime.now());
         newListing.setCondition(listingDto.getCondition());
         newListing.setConditionDescription(listingDto.getConditionDescription());
-        newListing.setYouTubeLink(listingDto.getYouTubeLink());
-        newListing.setDeliverMethod(listingDto.getDeliverMethod());
+        newListing.setType(listingDto.getType());
         newListing.setPrice(listingDto.getPrice());
         newListing.setIs3PercentFromFinalSellingPrice(listingDto.getIs3PercentFromFinalSellingPrice());
         newListing.setIsAcceptOffers(listingDto.getIsAcceptOffers());
-        newListing.setBumpRate(listingDto.getBumpRate());
-        newListing.setTags(listingDto.getTags());
         newListing.setDeadline(listingDto.getDeadline());
 
+        //create product
+        Product newProduct = new Product();
+        newProduct.setName(listingDto.getTitle());
+        newProduct.setSellerId(listingDto.getAuthorId());
+        newProduct.setPrice(listingDto.getPrice());
+        newProduct.setBrandId(listingDto.getBrand());
+        newProduct.setCondition(listingDto.getCondition());
+        newProduct.setFormula(listingDto.getFormula());
+        newProduct.setSize(listingDto.getSize());
+        newProduct.setYear(listingDto.getYear());
+        newProduct.setDescription(listingDto.getDescription());
+        newProduct.setStatus("active");
+        newProduct.setCategory(listingDto.getType());
+        newProduct.setCreatedDate(LocalDateTime.now());
+        newProduct.setSellerEmail("paugustin03@gmail.com");
+
         //save post and listing
+
         Post post = postRepository.save(newPost);
         Listing listing = listingRepository.save(newListing);
+        newProduct.setPostId(listing.getId());
+        productService.saveProduct(newProduct);
 
         //update post and listing with ids
         post.setPostTypeId(listing.getId());
         listing.setPostId(post.getId());
+
+        User existingUser = user.get();
+        existingUser.setMuzPoints(existingUser.getMuzPoints() + 25);
+        existingUser.setNoOfSales(existingUser.getNoOfSales() + 1);
+        existingUser.setNoOfPosts(existingUser.getNoOfPosts() + 1);
+        userService.updateUser(existingUser);
 
         Post postUpdated = postRepository.save(post);
         Listing listingUpdated = listingRepository.save(listing);
@@ -191,7 +229,7 @@ public class ListingServiceImpl implements ListingService {
         PostDetailsDto postDetailsDto = postManager.getPostDetailsDto(postUpdated, listingDetailsDto, authorOptional.get());
 
         //publish the listing created event
-        listingEventPublisher.publishListingCreatedEvent(listingUpdated.getId());
+//        listingEventPublisher.publishListingCreatedEvent(listingUpdated.getId());
 
         return Optional.ofNullable(postDetailsDto);
     }
@@ -212,23 +250,19 @@ public class ListingServiceImpl implements ListingService {
         listing.setBrand(updateDto.getBrand());
         listing.setModel(updateDto.getModel());
         listing.setYear(updateDto.getYear());
-        listing.setFinish(updateDto.getFinish());
+        listing.setSize(updateDto.getSize());
         listing.setTitle(updateDto.getTitle());
         listing.setSubTitle(updateDto.getSubTitle());
         listing.setDescription(updateDto.getDescription());
-        listing.setIsHandMade(updateDto.getIsHandMade());
+        listing.setFormula(updateDto.getFormula());
         listing.setImages(updateDto.getImages());
         listing.setCondition(updateDto.getCondition());
         listing.setConditionDescription(updateDto.getConditionDescription());
-        listing.setYouTubeLink(updateDto.getYouTubeLink());
-        listing.setDeliverMethod(updateDto.getDeliverMethod());
-        listing.setShippingDetails(updateDto.getShippingDetails());
+        listing.setType(updateDto.getType());
         listing.setPrice(updateDto.getPrice());
         listing.setIs3PercentFromFinalSellingPrice(updateDto.getIs3PercentFromFinalSellingPrice());
         listing.setIsAcceptOffers(updateDto.getIsAcceptOffers());
-        listing.setBumpRate(updateDto.getBumpRate());
         listing.setDeadline(updateDto.getDeadline());
-        listing.setTags(updateDto.getTags());
         listing.setUpdatedDateTime(LocalDateTime.now());
 
         post.setUpdatedDateTime(LocalDateTime.now());

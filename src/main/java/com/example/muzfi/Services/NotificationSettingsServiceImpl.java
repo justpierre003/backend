@@ -15,8 +15,8 @@ public class NotificationSettingsServiceImpl implements NotificationSettingsServ
 
     @Override
     public NotificationSettings createNotificationSettings(NotificationSettings settings) {
-        EmailNotificationService emailNotificationService = new EmailNotificationService();
-        emailNotificationService.sendUncheckedNotificationsAlert(settings.getUserId(),1);
+//        EmailNotificationService emailNotificationService = new EmailNotificationService();
+//        emailNotificationService.sendUncheckedNotificationsAlert(settings.getUserId(),1);
         return notificationSettingsRepository.save(settings);
 
     }
@@ -32,19 +32,15 @@ public class NotificationSettingsServiceImpl implements NotificationSettingsServ
 
         if (notificationSettingsOptional.isPresent()) {
             NotificationSettings existingSettings = notificationSettingsOptional.get();
-            existingSettings.setInboxMessages(settings.isInboxMessages());
-            existingSettings.setChatMessages(settings.isChatMessages());
-            existingSettings.setActivity(settings.isActivity());
-            existingSettings.setMentions(settings.isMentions());
-            existingSettings.setCommentsOnPosts(settings.isCommentsOnPosts());
-            existingSettings.setUpvoteOnPosts(settings.isUpvoteOnPosts());
-            existingSettings.setUpvoteOnComments(settings.isUpvoteOnComments());
-            existingSettings.setRepliesToComments(settings.isRepliesToComments());
-            existingSettings.setActivityOnComments(settings.isActivityOnComments());
-            existingSettings.setActivityOnThreads(settings.isActivityOnThreads());
-            existingSettings.setActivityOnChatPosts(settings.isActivityOnChatPosts());
-            existingSettings.setOffersMadeAccepted(settings.isOffersMadeAccepted());
-            existingSettings.setOrders(settings.isOrders());
+            if (settings.getInboxMessages() != null) { existingSettings.setInboxMessages(settings.getInboxMessages());}
+            if (settings.getChatMessages()!= null) {existingSettings.setChatMessages(settings.getChatMessages());}
+            if (settings.getActivity() != null) {existingSettings.setActivity(settings.getActivity());}
+            if (settings.getMentions() != null) {existingSettings.setMentions(settings.getMentions());}
+            if (settings.getCommentsOnPosts() != null) {existingSettings.setCommentsOnPosts(settings.getCommentsOnPosts());}
+            if (settings.getRepliesToComments() != null) {existingSettings.setRepliesToComments(settings.getRepliesToComments());}
+            if (settings.getOffersMadeAccepted() != null) {existingSettings.setOffersMadeAccepted(settings.getOffersMadeAccepted());}
+            if (settings.getOrders() != null) {existingSettings.setOrders(settings.getOrders());}
+
 
             NotificationSettings updatedSettings = notificationSettingsRepository.save(existingSettings);
             return Optional.of(updatedSettings);

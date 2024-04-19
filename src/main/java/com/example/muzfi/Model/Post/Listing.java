@@ -1,6 +1,8 @@
 package com.example.muzfi.Model.Post;
 
 import com.example.muzfi.Enums.DeliverMethod;
+import com.example.muzfi.Enums.Formula;
+import com.example.muzfi.Enums.ProductCondition;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,48 +35,48 @@ public class Listing {
     @NotNull
     private String model;
 
-    private String year;
+    private Integer year;
 
-    private String finish;
+    private Double size;
 
     @NotNull
     private String title;
 
     private String subTitle;
 
+    @NotNull
     private String description;
 
-    private Boolean isHandMade;
+    private Formula formula;
 
     @NotNull
     private List<String> images;
 
     @NotNull
-    private String condition;
+    private ProductCondition condition;
 
     @NotNull
     private String conditionDescription;
 
-    private String youTubeLink;
+    private String type;
+
+//    @NotNull
+//    private List<DeliverMethod> deliverMethod;
+//
+//    private ProductShippingDetails shippingDetails;
 
     @NotNull
-    private List<DeliverMethod> deliverMethod;
-
-    private ProductShippingDetails shippingDetails;
-
     private BigDecimal price;
 
     private Boolean is3PercentFromFinalSellingPrice;
 
     private Boolean isAcceptOffers;
 
-    private BigDecimal bumpRate;
+//    private BigDecimal bumpRate;
 
     private int bidsCount;
 
     private LocalDateTime deadline;
-
-    private List<String> tags;
 
     private LocalDateTime createdDateTime;
 

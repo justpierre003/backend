@@ -1,5 +1,6 @@
 package com.example.muzfi.Dto.UserDto;
 
+import com.example.muzfi.Enums.BackgroundType;
 import com.example.muzfi.Enums.UserGender;
 import com.example.muzfi.Model.SocialLink;
 import lombok.AllArgsConstructor;
@@ -26,17 +27,15 @@ public class UserProfileDto {
 
     private String displayName;
 
+    private BackgroundType background;
+
     private UserGender gender;
 
     private String description;
 
     private String location;
 
-    private String country;
-
-    private String state;
-
-    private String city;
+    private Boolean isShowsUpInSearchResults = true;
 
     private String profileUrl;
 

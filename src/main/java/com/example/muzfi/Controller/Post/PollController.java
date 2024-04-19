@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/polls")
 public class PollController {
@@ -30,17 +30,17 @@ public class PollController {
         this.pollService = pollService;
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping("create-poll")
     public ResponseEntity<?> createPoll(@Valid @RequestBody PollCreateDto pollDto) {
         try {
             String loggedInUserId = pollDto.getAuthorId();
 
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             Optional<?> poll = pollService.createPoll(pollDto);
 

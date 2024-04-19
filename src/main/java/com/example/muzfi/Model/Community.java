@@ -1,5 +1,7 @@
 package com.example.muzfi.Model;
 
+import com.example.muzfi.Enums.GenreType;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
@@ -8,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +21,7 @@ public class Community {
 
     @Id
     private String id;
+    @NotEmpty(message = "Name is required")
     private String name;
     private String title;
     private String creatorId;
@@ -27,20 +31,20 @@ public class Community {
     private String about;
     private String sub;
     private String type;
-    private String genre;
+    private GenreType genre;
     private boolean joinable;
     private boolean creatable;
     private List<String> reviews;
     private List<String> similarCommunityIds;
-    private CommunityRule rules;
+    private List<CommunityRule> rules;
     private int subscriberCount;
     private int rankedSize;
-    private List<String> moderators;
+    private List<User> moderators;
     private String country;
-    private Binary communityImage;
+    private String communityImage;
     private String description;
 
-    public Community(String name, String title, String creatorId, LocalDateTime createdDateTime, List<String> subscriberIds, List<String> postIds, String about, String sub, String type, String genre, boolean joinable, boolean creatable, List<String> reviews, List<String> similarCommunityIds, CommunityRule rules, int subscriberCount, int rankedSize, List<String> moderators, String country, Binary communityImage, String description) {
+    public Community(String name, String title, String creatorId, LocalDateTime createdDateTime, List<String> subscriberIds, List<String> postIds, String about, String sub, String type, GenreType genre, boolean joinable, boolean creatable, List<String> reviews, List<String> similarCommunityIds, List<CommunityRule> rules, int subscriberCount, int rankedSize, List<User> moderators, String country, String communityImage, String description) {
         this.name = name;
         this.title = title;
         this.creatorId = creatorId;
@@ -64,6 +68,6 @@ public class Community {
         this.description = description;
     }
 
-    public <E> Community(String name, String title, String creatorId, LocalDateTime now, ArrayList<E> es, ArrayList<E> es1, String about, String sub, String type, String genre, boolean joinable, boolean creatable, ArrayList<E> es2, ArrayList<E> es3, CommunityRule rules, ArrayList<E> es4, String country, Binary communityImage, String description) {
+    public <E> Community(String name, String title, String creatorId, LocalDateTime now, ArrayList<E> es, ArrayList<E> es1, String about, String sub, String type, GenreType genre, boolean joinable, boolean creatable, ArrayList<E> es2, ArrayList<E> es3, List<CommunityRule> rules, ArrayList<E> es4, String country, String communityImage, String description) {
     }
 }

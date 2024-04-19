@@ -1,5 +1,6 @@
 package com.example.muzfi.Services;
 
+import com.example.muzfi.Enums.Formula;
 import com.example.muzfi.Model.Product;
 import com.example.muzfi.Enums.ProductCondition;
 import com.example.muzfi.Repository.ProductRepository;
@@ -37,8 +38,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getProductsByFormula(Formula formula) {
+        return productRepository.findByFormula(formula);
+    }
+
+    @Override
+    public List<Product> getProductsBySize(Double size) {
+        return productRepository.findBySize(size);
+    }
+
+    @Override
     public List<Product> getProductsByBrand(String brandId) {
         return productRepository.findByBrandId(brandId);
+    }
+
+    @Override
+    public List<Product> getProductsByUser(String userId) {
+        return productRepository.findBySellerId(userId);
     }
 
     @Override
@@ -65,14 +81,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(Product product) {
+
         Product savedProduct = productRepository.save(product);
-        if ("active".equals(savedProduct.getStatus())) {
-            try {
-                emailConfirmationService.sendNewListingConfirmation(savedProduct.getSellerEmail(), savedProduct);
-            } catch (MessagingException e) {
-                // Handle the exception if email confirmation fails
-            }
-        }
+//        if ("active".equals(savedProduct.getStatus())) {
+//            try {
+//                emailConfirmationService.sendNewListingConfirmation(savedProduct.getSellerEmail(), savedProduct);
+//            } catch (MessagingException e) {
+//                // Handle the exception if email confirmation fails
+//            }
+//        }
         return savedProduct;
     }
 

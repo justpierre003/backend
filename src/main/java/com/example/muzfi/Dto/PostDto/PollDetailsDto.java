@@ -21,6 +21,8 @@ public class PollDetailsDto {
 
     private String authorId;
 
+    private PostAuthorDto author;
+
     private String title;
 
     private String text;
@@ -32,6 +34,12 @@ public class PollDetailsDto {
     private List<PostCategory> postCategories;
 
     private List<String> tags;
+
+    private Boolean isLiked;
+
+    private Integer comments;
+
+    private Integer likes;
 
     private Boolean isVoted;
 

@@ -17,6 +17,8 @@ public class CommentDetailsDto {
 
     private String postId;
 
+    private PostAuthorDto author;
+
     private String userId;
 
     private String text;

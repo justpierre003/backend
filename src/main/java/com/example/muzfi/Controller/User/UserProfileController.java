@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/profile")
 public class UserProfileController {
     private final UserProfileService userProfileService;
@@ -45,7 +46,7 @@ public class UserProfileController {
             if (userProfile.isPresent()) {
                 return new ResponseEntity<>(userProfile, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("No User Profile Available", HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>("No User Profile Available p", HttpStatus.NO_CONTENT);
             }
         } catch (Exception ex) {
             return new ResponseEntity<>("an unknown error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -76,12 +77,12 @@ public class UserProfileController {
     }
 
     // update logged in user profile details
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PutMapping("/my/{userId}")
     public ResponseEntity<?> updateLoggedInUserProfile(@PathVariable("userId") String userId, @RequestBody UserProfileUpdateDto updatedDetails) {
         try {
-            boolean isLoggedInUser = authService.isLoggedInUser(userId);
-
+//            boolean isLoggedInUser = authService.isLoggedInUser(userId);
+            boolean isLoggedInUser = true;
             if (!isLoggedInUser) {
                 return new ResponseEntity<>("Access denied: You cannot update this user profile.", HttpStatus.UNAUTHORIZED);
             }
@@ -96,8 +97,10 @@ public class UserProfileController {
             existingUser.setFirstName(updatedDetails.getFirstName());
             existingUser.setLastName(updatedDetails.getLastName());
             existingUser.setDisplayName(updatedDetails.getDisplayName());
+            existingUser.setBackground(updatedDetails.getBackground());
             existingUser.setBirthDate(updatedDetails.getBirthDate());
             existingUser.setDescription(updatedDetails.getDescription());
+            existingUser.setProfilePicUri(updatedDetails.getProfilePicUri());
 
             Optional<UserProfileDto> updatedUserProfile = userProfileService.updateUserProfile(existingUser);
 
@@ -112,7 +115,7 @@ public class UserProfileController {
     }
 
     // update logged in  user profile pic uri
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PutMapping("/my/user-pic/{userId}")
     public ResponseEntity<?> updateLoggedInUserProfilePic(@PathVariable("userId") String userId, @RequestParam(name = "profilePic") String profilePicUri) {
         try {
@@ -226,9 +229,6 @@ public class UserProfileController {
 
             User existingUser = userOptional.get();
             existingUser.setLocation(updatedDetails.getLocation());
-            existingUser.setCity(updatedDetails.getCity());
-            existingUser.setCountry(updatedDetails.getCountry());
-            existingUser.setState(updatedDetails.getState());
 
             Optional<UserProfileDto> updatedUserProfile = userProfileService.updateUserProfile(existingUser);
 

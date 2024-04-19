@@ -1,9 +1,6 @@
 package com.example.muzfi.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,20 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Builder
 @Document
+@Getter
+@Setter
 public class NotificationSettings {
     @Id
     private String userId;
-    private boolean inboxMessages;
-    private boolean chatMessages;
-    private boolean activity;
-    private boolean mentions;
-    private boolean commentsOnPosts;
-    private boolean upvoteOnPosts;
-    private boolean upvoteOnComments;
-    private boolean repliesToComments;
-    private boolean activityOnComments;
-    private boolean activityOnThreads;
-    private boolean activityOnChatPosts;
-    private boolean offersMadeAccepted;
-    private boolean orders;
+    private Boolean inboxMessages;
+    private Boolean chatMessages;
+    private Boolean activity;
+    private Boolean mentions;
+    private Boolean commentsOnPosts;
+    private Boolean repliesToComments;
+    private Boolean offersMadeAccepted;
+    private Boolean orders;
 }

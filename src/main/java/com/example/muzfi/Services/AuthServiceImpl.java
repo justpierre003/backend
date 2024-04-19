@@ -1,11 +1,12 @@
 package com.example.muzfi.Services;
 
 import ch.qos.logback.classic.encoder.JsonEncoder;
-import com.example.muzfi.Dto.UserDto.LoginDto;
 import com.example.muzfi.Dto.UserDto.PasswordResetDto;
 import com.example.muzfi.Dto.UserDto.UserSignupDto;
 import com.example.muzfi.Enums.RoleEditAction;
 import com.example.muzfi.Enums.UserRole;
+import com.example.muzfi.Model.GearRoom;
+import com.example.muzfi.Model.NotificationSettings;
 import com.example.muzfi.Model.User;
 import com.example.muzfi.Repository.UserRepository;
 import com.example.muzfi.Services.EmailConfirmationService.EmailConfirmationService;
@@ -18,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,8 +40,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final EmailConfirmationService emailConfirmationService;
 
+    private final NotificationSettingsService notificationSettingsService;
 
-
+    private final GearRoomService gearRoomService;
 
 
     private final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
@@ -52,13 +52,15 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(
             OktaRestClient oktaRestClient,
             UserService userService,
-            EmailConfirmationService emailConfirmationService
-            ) {
+            EmailConfirmationService emailConfirmationService,
+            GearRoomService gearRoomService,
+            NotificationSettingsService notificationSettingsService) {
 
         this.oktaRestClient = oktaRestClient;
         this.userService = userService;
         this.emailConfirmationService = emailConfirmationService;
-
+        this.gearRoomService = gearRoomService;
+        this.notificationSettingsService = notificationSettingsService;
 
     }
 
@@ -70,10 +72,18 @@ public class AuthServiceImpl implements AuthService {
             newUser.setUserName(userSignupDto.getUsername());
             newUser.setEmail(userSignupDto.getEmail());
             newUser.setPassword(userSignupDto.getPassword());
-
+            newUser.setMuzPoints(100);
+            newUser.setIsShowsUpInSearchResults(true);
+            newUser.setLocation("USA");
+            newUser.setProfilePicUri("Default");
+            newUser.setDescription("Hey Fam, Welcome to my Profile! Let's connect and share today.");
             // Save the user to the database
+            GearRoom createdGearRoom = new GearRoom();
+            createdGearRoom.setUserId(newUser.getId());
+            gearRoomService.createGearRoom(createdGearRoom);
             User savedUser = userService.createUser(newUser);
-
+            NotificationSettings settings = new NotificationSettings(newUser.getId(), true,true,true,true,true,true,true,true);
+            notificationSettingsService.createNotificationSettings(settings);
             // Optionally, you can send a confirmation email here if needed
             try {
                 emailConfirmationService.sendSignUpConfirmationEmail(savedUser.getEmail(), generateConfirmationToken());

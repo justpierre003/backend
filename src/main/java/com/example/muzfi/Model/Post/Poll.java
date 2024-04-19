@@ -1,5 +1,7 @@
 package com.example.muzfi.Model.Post;
 
+import com.example.muzfi.Dto.PostDto.PostAuthorDto;
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Enums.PostCategory;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,8 @@ public class Poll {
 
     private String authorId;
 
+    private PostAuthorDto author;
+
     @NotNull
     private String title;
 
@@ -34,15 +38,22 @@ public class Poll {
 
     private LocalDateTime pollDeadline;
 
+    private Boolean isLiked;
+
+    private Integer comments;
+
+    private Integer likes;
+
     private List<PostCategory> postCategories;
 
     private List<String> tags;
+
+    @NotNull
+    private GenreType postCategory;
 
     private LocalDateTime createdDateTime;
 
     private LocalDateTime updatedDateTime;
 
-    ///newly add
-    private String comments;
 
 }

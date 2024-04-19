@@ -15,7 +15,7 @@ import com.example.muzfi.Services.Post.CommentService;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -45,17 +45,17 @@ public class CommentController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping
     public ResponseEntity<?> createComment(@RequestBody CommentCreateDto commentDto) {
         try {
-            String loggedInUserId = commentDto.getUserId();
-
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            String loggedInUserId = commentDto.getUserId();
+//
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             Optional<Comment> commentOptional = commentService.createComment(commentDto);
 
@@ -69,17 +69,17 @@ public class CommentController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping("/reply")
     public ResponseEntity<?> createReplyComment(@RequestBody CommentReplyDto replyDto) {
         try {
-            String loggedInUserId = replyDto.getUserId();
-
-            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
-
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
-            }
+//            String loggedInUserId = replyDto.getUserId();
+//
+//            boolean isLoggedInUser = authService.isLoggedInUser(loggedInUserId);
+//
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You are not eligible to perform this action.", HttpStatus.UNAUTHORIZED);
+//            }
 
             Optional<CommentDetailsDto> commentOptional = commentService.createReplyComment(replyDto);
 

@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
             userDto.setFirstName(user.getFirstName());
             userDto.setLastName(user.getLastName());
             userDto.setDisplayName(user.getDisplayName());
+            userDto.setBackground(String.valueOf(user.getBackground()));
             userDto.setId(user.getId());
             userDto.setProfileUrl(user.getProfilePicUri());
 
@@ -100,6 +101,7 @@ public class UserServiceImpl implements UserService {
             userDto.setFirstName(user.getFirstName());
             userDto.setLastName(user.getLastName());
             userDto.setDisplayName(user.getDisplayName());
+            userDto.setBackground(String.valueOf(user.getBackground()));
             userDto.setId(user.getId());
             userDto.setProfileUrl(user.getProfilePicUri());
 

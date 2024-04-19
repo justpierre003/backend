@@ -205,9 +205,6 @@ public class UserSettingController {
         UserProfileDto userProfileDto = new UserProfileDto();
         userProfileDto.setEmail(userSetting.getEmail());
         userProfileDto.setGender(userSetting.getGender());
-        userProfileDto.setCountry(userSetting.getCountry());
-        userProfileDto.setState(userSetting.getState());
-        userProfileDto.setCity(userSetting.getCity());
         return userProfileDto;
     }
 }

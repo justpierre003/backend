@@ -1,5 +1,6 @@
 package com.example.muzfi.Services;
 
+import com.example.muzfi.Dto.PostDto.GearCreateDto;
 import com.example.muzfi.Model.Gear;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface GearService {
 
     Optional<Gear> getGearById(String gearId);
 
-    Gear createGear(Gear gear);
+    Gear createGear(GearCreateDto gear);
 
     Gear updateGear(String gearId, Gear gear);
 

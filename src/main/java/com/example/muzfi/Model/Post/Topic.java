@@ -1,5 +1,7 @@
 package com.example.muzfi.Model.Post;
 
+import com.example.muzfi.Dto.PostDto.PostAuthorDto;
+import com.example.muzfi.Enums.GenreType;
 import com.example.muzfi.Enums.PostCategory;
 import com.example.muzfi.Enums.TopicType;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,6 +29,8 @@ public class Topic {
 
     private String authorId;
 
+    private PostAuthorDto author;
+
     @NotNull
     private String title;
 
@@ -35,13 +40,21 @@ public class Topic {
 
     private String Content;
 
-    private String links;
+    private Boolean isLiked;
 
-    private List<PostCategory> postCategory;
+    private Integer comments;
+
+    private Integer likes;
+
+    private Binary image;
+
+    private String links;
+    @NotNull
+    private GenreType postCategory;
 
     private String Community;
 
-    private List<String> tags;
+    private String tags;
 
     private LocalDateTime createdDateTime;
 

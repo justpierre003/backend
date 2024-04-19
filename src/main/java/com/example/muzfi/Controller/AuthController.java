@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -44,12 +45,12 @@ public class AuthController {
     public ResponseEntity<String> signUp(@RequestBody UserSignupDto userSignupDto) {
         try {
             // Perform user signup logic here using userSignupDto
-            User newUser = authService.signUp(userSignupDto);
+           User newUser = authService.signUp(userSignupDto);
 
             // Optionally, send a confirmation email
-            sendConfirmationEmail(newUser.getEmail());
+//            sendConfirmationEmail(newUser.getEmail());
 
-            return new ResponseEntity<>("Signup successful", HttpStatus.OK);
+            return new ResponseEntity<>(newUser.getId(), HttpStatus.OK);
         } catch (Exception e) {
             // Log the error
             log.error("Error during signup", e);

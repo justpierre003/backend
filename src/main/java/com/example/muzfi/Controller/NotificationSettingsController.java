@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("api/notification/settings")
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class NotificationSettingsController {
     private final NotificationSettingsService notificationSettingsService;
     private final AuthService authService;
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PostMapping
     public ResponseEntity<?> createNotificationSettings(@RequestBody NotificationSettings settings) {
         try {
@@ -29,7 +29,7 @@ public class NotificationSettingsController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getNotificationSettingsByUserId(@PathVariable("userId") String userId) {
         try {
@@ -45,7 +45,7 @@ public class NotificationSettingsController {
         }
     }
 
-    @PreAuthorize("hasAuthority('Muzfi_Member')")
+//    @PreAuthorize("hasAuthority('Muzfi_Member')")
     @PutMapping
     public ResponseEntity<?> updateNotificationSettings(@RequestBody NotificationSettings settings) {
         try {
@@ -55,10 +55,10 @@ public class NotificationSettingsController {
             }
 
             // Check if the logged-in user is the owner of the notification settings
-            boolean isLoggedInUser = authService.isLoggedInUser(settings.getUserId());
-            if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You cannot update notification settings for another user.", HttpStatus.UNAUTHORIZED);
-            }
+//            boolean isLoggedInUser = authService.isLoggedInUser(settings.getUserId());
+//            if (!isLoggedInUser) {
+//                return new ResponseEntity<>("Access denied: You cannot update notification settings for another user.", HttpStatus.UNAUTHORIZED);
+//            }
 
             // Update the user notification settings
             Optional<NotificationSettings> updatedSettings = notificationSettingsService.updateNotificationSettings(settings);
