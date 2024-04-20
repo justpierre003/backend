@@ -61,7 +61,7 @@ public class UserProfileController {
             boolean isLoggedInUser = authService.isLoggedInUser(userId);
 
             if (!isLoggedInUser) {
-                return new ResponseEntity<>("Access denied: You cannot update this user profile.", HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>("Access denied: LOVE cannot update this user profile.", HttpStatus.UNAUTHORIZED);
             }
 
             Optional<List<UserBasicDto>> blockedUsers = userService.getBlockedUsersByUser(userId);
